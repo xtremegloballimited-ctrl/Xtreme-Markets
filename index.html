@@ -590,26 +590,27 @@
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse 100% 80% at 50% 50%, rgba(106,255,65,0.04) 0%, transparent 70%),
-        radial-gradient(ellipse 80% 60% at 20% 80%, rgba(78,120,255,0.04) 0%, transparent 60%);
+      background-image: url('years-bg.avif');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       pointer-events: none;
+      z-index: 0;
     }
-    /* World map silhouette using gradient */
     .years-section::after {
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='600' viewBox='0 0 1200 600'%3E%3Cellipse cx='600' cy='300' rx='580' ry='260' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'/%3E%3Cellipse cx='600' cy='300' rx='400' ry='200' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'/%3E%3Cellipse cx='600' cy='300' rx='200' ry='130' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'/%3E%3C/svg%3E");
-      background-size: cover;
-      background-position: center;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.55) 100%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(106,255,65,0.04) 0%, transparent 70%);
       pointer-events: none;
-      opacity: 0.5;
+      z-index: 1;
     }
 
     .years-inner {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       max-width: 720px;
       margin: 0 auto;
     }
