@@ -580,41 +580,55 @@
        11 YEARS SECTION
     ═══════════════════════════════════════════════ */
     .years-section {
-      padding: 0;
+      padding: 120px 32px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
       background: var(--canvas);
     }
-
-    .years-img {
-      width: 60%;
-      max-width: 700px;
-      min-width: 320px;
-      display: block;
-      margin: 0 auto;
+    .years-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('years-bg.avif');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .years-section::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.55) 100%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(106,255,65,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
     }
 
-    /* Text block sits below the image, constrained */
-    .years-text {
+    .years-inner {
+      position: relative;
+      z-index: 2;
       max-width: 720px;
       margin: 0 auto;
-      padding: 40px 32px 100px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
     }
-
-    .years-section h2 {
-      font-size: clamp(32px, 4vw, 52px);
-      font-weight: 700;
+    .years-inner h2 {
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 600;
       line-height: 1.1;
       letter-spacing: -0.02em;
+      margin-bottom: 24px;
     }
-    .years-section p {
+    .years-inner p {
       font-size: 16px;
       color: var(--text2);
       line-height: 1.6;
+      margin-bottom: 36px;
       max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .years-links {
       display: flex;
@@ -1723,7 +1737,7 @@
 
       .container { padding: 0 20px; }
 
-      .years-text { padding: 32px 20px 80px; }
+      .years-section { padding: 80px 20px; }
       .platform-section { padding: 80px 20px; }
       .features-section { padding: 80px 20px; }
       .easy-start-section { padding: 80px 20px; }
@@ -1981,11 +1995,7 @@
      11 YEARS SECTION
 ════════════════════════════════════════════ -->
 <section class="years-section section-animate">
-  <!-- Full-width "11" image — no container, fills viewport width -->
-  <img src="years-bg.avif" class="years-img" alt="11 years">
-
-  <!-- Text below the image, constrained -->
-  <div class="years-text">
+  <div class="years-inner">
     <h2><span class="accent-word">11 years</span> of empowering traders,<br>and it's just a beginning.</h2>
     <p>
       Since 2014, Xtreme Markets has grown from a small trading platform into a
