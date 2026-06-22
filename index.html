@@ -618,37 +618,19 @@
        11 YEARS SECTION
     ═══════════════════════════════════════════════ */
     .years-section {
-      padding: 120px 32px;
+      padding: 80px 32px 100px;
       text-align: center;
-      position: relative;
-      overflow: hidden;
       background: var(--canvas);
     }
-    .years-section::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url('years-bg.avif');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .years-section::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.55) 100%),
-        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(106,255,65,0.04) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 1;
+
+    .years-img {
+      width: 100%;
+      max-width: 760px;
+      display: block;
+      margin: 0 auto 40px;
     }
 
     .years-inner {
-      position: relative;
-      z-index: 2;
       max-width: 720px;
       margin: 0 auto;
     }
@@ -2033,6 +2015,7 @@
      11 YEARS SECTION
 ════════════════════════════════════════════ -->
 <section class="years-section section-animate">
+  <img src="years-bg.avif" class="years-img" alt="11 years">
   <div class="years-inner">
     <h2><span class="accent-word">11 years</span> of empowering traders,<br>and it's just a beginning.</h2>
     <p>
