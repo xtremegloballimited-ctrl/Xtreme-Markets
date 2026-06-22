@@ -489,10 +489,9 @@
       display: block;
     }
 
-    /* SVG bars decoration — sits inside the man wrapper, behind the man */
+    /* SVG bars decoration — sits inside the man wrapper, behind the man via DOM order */
     .hero-bg-bars {
       position: absolute;
-      z-index: -1;
       top: -40px;
       pointer-events: none;
     }
@@ -1984,11 +1983,11 @@
 
     <!-- Man image wrapper — inline on mobile, absolute-centered on desktop -->
     <div class="hero-man-wrap">
+      <!-- SVG bars first so man image layers on top via DOM stacking -->
+      <img class="hero-bg-bars" src="hero-bg.svg" alt="" aria-hidden="true">
       <picture>
         <img class="hero-man-img" src="hero-man.avif" alt="hero image" fetchpriority="high">
       </picture>
-      <!-- SVG bars sit behind the man image -->
-      <img class="hero-bg-bars" src="hero-bg.svg" alt="" aria-hidden="true">
     </div>
 
     <!-- Text content — below image on mobile, overlapping on desktop -->
