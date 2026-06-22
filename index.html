@@ -448,90 +448,95 @@
     .hero {
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
       position: relative;
       overflow: hidden;
-      padding: 100px 32px 60px;
-      text-align: center;
+      padding: 100px 0 0;
       background: var(--canvas);
     }
 
-    /* Right-side chart decoration */
-    .hero-bg-deco {
+    /* Full-section SVG background */
+    .hero-bg-svg {
       position: absolute;
-      top: 0; right: 0;
-      width: 55%;
+      inset: 0;
+      width: 100%;
       height: 100%;
+      object-fit: cover;
+      object-position: center;
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
+      opacity: 1;
     }
-    .hero-bg-deco::before {
+
+    /* Subtle overlay so text stays readable over SVG */
+    .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(106,255,65,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 50% at 80% 20%, rgba(106,255,65,0.04) 0%, transparent 60%);
+      background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.82) 0%,
+        rgba(0,0,0,0.55) 45%,
+        rgba(0,0,0,0.10) 100%
+      );
+      z-index: 1;
+      pointer-events: none;
     }
 
-    /* Animated chart bars decorating the right */
-    .hero-chart-bars {
-      position: absolute;
-      bottom: 0; right: 0;
+    /* Inner flex row: text left + man right */
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 32px 60px;
       display: flex;
       align-items: flex-end;
-      gap: 6px;
-      padding: 0 60px 0 0;
-      height: 100%;
-      opacity: 0.18;
-    }
-    .hero-chart-bars .bar {
-      width: 32px;
-      background: var(--green);
-      border-radius: 6px 6px 0 0;
-      animation: barPulse 3s ease-in-out infinite;
-    }
-    @keyframes barPulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
-    }
-
-    /* Green glow blob top-right */
-    .hero-glow {
-      position: absolute;
-      top: -100px; right: -200px;
-      width: 700px; height: 700px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(106,255,65,0.08) 0%, transparent 65%);
-      pointer-events: none;
-      z-index: 0;
+      justify-content: space-between;
+      gap: 32px;
     }
 
     .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 780px;
-      width: 100%;
+      flex: 0 0 auto;
+      max-width: 580px;
+      text-align: left;
+      padding-bottom: 60px;
+    }
+
+    /* Hero man image */
+    .hero-man {
+      flex: 0 0 auto;
+      width: clamp(320px, 42vw, 620px);
+      align-self: flex-end;
+      margin-bottom: -4px;
+      pointer-events: none;
+      filter: drop-shadow(0 0 60px rgba(106,255,65,0.18));
     }
 
     .hero h1 {
-      font-size: clamp(36px, 5.5vw, 72px);
-      font-weight: 600;
-      line-height: 1;
+      font-size: clamp(34px, 4.8vw, 68px);
+      font-weight: 700;
+      line-height: 1.05;
       letter-spacing: -0.03em;
-      margin-bottom: 40px;
+      margin-bottom: 24px;
       color: var(--text);
+    }
+
+    .hero-sub {
+      font-size: clamp(15px, 1.6vw, 18px);
+      color: var(--text2);
+      margin-bottom: 40px;
+      max-width: 460px;
+      line-height: 1.6;
     }
 
     .hero-cta {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 16px;
-      margin-bottom: 48px;
+      margin-bottom: 52px;
       flex-wrap: wrap;
     }
     .hero-cta .btn-green {
@@ -544,7 +549,7 @@
     .hero-pills {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 8px;
       flex-wrap: wrap;
     }
@@ -1717,10 +1722,13 @@
       .nav-links, .nav-right { display: none; }
       .hamburger { display: flex; }
 
-      .hero { padding: 100px 20px 48px; }
-      .hero h1 { font-size: clamp(30px, 8vw, 48px); }
-
-      .hero-bg-deco { width: 100%; opacity: 0.4; }
+      .hero { padding: 100px 0 0; }
+      .hero-inner { flex-direction: column; align-items: flex-start; padding: 0 20px 48px; gap: 0; }
+      .hero-content { max-width: 100%; padding-bottom: 32px; text-align: left; }
+      .hero-man { width: 100%; max-width: 360px; align-self: center; margin-bottom: 0; }
+      .hero-cta { justify-content: flex-start; }
+      .hero-pills { justify-content: flex-start; }
+      .hero::before { background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.4) 100%); }
 
       .feat-grid-2 { grid-template-columns: 1fr; }
       .learning-grid { grid-template-columns: 1fr; }
@@ -1948,49 +1956,36 @@
      HERO SECTION
 ════════════════════════════════════════════ -->
 <section class="hero">
-  <!-- Background right-side decoration -->
-  <div class="hero-bg-deco">
-    <div class="hero-chart-bars">
-      <div class="bar" style="height:18%;animation-delay:0s"></div>
-      <div class="bar" style="height:32%;animation-delay:0.1s"></div>
-      <div class="bar" style="height:24%;animation-delay:0.2s"></div>
-      <div class="bar" style="height:45%;animation-delay:0.3s"></div>
-      <div class="bar" style="height:38%;animation-delay:0.4s"></div>
-      <div class="bar" style="height:56%;animation-delay:0.5s"></div>
-      <div class="bar" style="height:42%;animation-delay:0.6s"></div>
-      <div class="bar" style="height:68%;animation-delay:0.7s"></div>
-      <div class="bar" style="height:55%;animation-delay:0.8s"></div>
-      <div class="bar" style="height:75%;animation-delay:0.9s"></div>
-      <div class="bar" style="height:62%;animation-delay:1.0s"></div>
-      <div class="bar" style="height:85%;animation-delay:1.1s"></div>
-      <div class="bar" style="height:72%;animation-delay:1.2s"></div>
-      <div class="bar" style="height:90%;animation-delay:1.3s"></div>
-      <div class="bar" style="height:78%;animation-delay:1.4s"></div>
-      <div class="bar" style="height:95%;animation-delay:1.5s"></div>
-    </div>
-  </div>
-  <div class="hero-glow"></div>
+  <!-- SVG background -->
+  <img src="hero-bg.svg" class="hero-bg-svg" alt="" aria-hidden="true">
 
-  <div class="hero-content">
-    <h1>Build confidence with<br>every single trade</h1>
+  <div class="hero-inner">
+    <!-- Left: text content -->
+    <div class="hero-content">
+      <h1>Build confidence with<br>every single trade</h1>
+      <p class="hero-sub">Trade forex, crypto, stocks and commodities with a platform built for both beginners and professionals.</p>
 
-    <div class="hero-cta">
-      <a href="register.html"><button class="btn-green">Start now for $0</button></a>
-      <a href="#modern_platform" class="link-green">
-        Learn more
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-      </a>
+      <div class="hero-cta">
+        <a href="register.html"><button class="btn-green">Start now for $0</button></a>
+        <a href="#modern_platform" class="link-green">
+          Learn more
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <!-- Tab pill anchors -->
+      <div class="hero-pills">
+        <a href="#modern_platform" class="hero-pill"><span class="pill-emoji">🔥</span> Modern platform</a>
+        <a href="#useful_features" class="hero-pill"><span class="pill-emoji">❤️</span> Useful features</a>
+        <a href="#easy_start" class="hero-pill"><span class="pill-emoji">🏁</span> Easy start</a>
+        <a href="#learning_center" class="hero-pill"><span class="pill-emoji">📚</span> Learning center</a>
+        <a href="#quick_withdrawals" class="hero-pill"><span class="pill-emoji">💰</span> Quick withdrawals</a>
+        <a href="#trusted_broker" class="hero-pill"><span class="pill-emoji">🛡️</span> Trusted broker</a>
+      </div>
     </div>
 
-    <!-- Tab pill anchors -->
-    <div class="hero-pills">
-      <a href="#modern_platform" class="hero-pill"><span class="pill-emoji">🔥</span> Modern platform</a>
-      <a href="#useful_features" class="hero-pill"><span class="pill-emoji">❤️</span> Useful features</a>
-      <a href="#easy_start" class="hero-pill"><span class="pill-emoji">🏁</span> Easy start</a>
-      <a href="#learning_center" class="hero-pill"><span class="pill-emoji">📚</span> Learning center</a>
-      <a href="#quick_withdrawals" class="hero-pill"><span class="pill-emoji">💰</span> Quick withdrawals</a>
-      <a href="#trusted_broker" class="hero-pill"><span class="pill-emoji">🛡️</span> Trusted broker</a>
-    </div>
+    <!-- Right: hero man image -->
+    <img src="hero-man.avif" class="hero-man" alt="Trader">
   </div>
 </section>
 
