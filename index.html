@@ -580,41 +580,35 @@
        11 YEARS SECTION
     ═══════════════════════════════════════════════ */
     .years-section {
-      padding: 0 32px 100px;
+      padding: 0;
       text-align: center;
       background: var(--canvas);
     }
 
-    .years-inner {
-      max-width: 800px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
+    /* Image fills full section width — no container constraint */
     .years-img {
       width: 100%;
-      max-width: 560px;
       display: block;
-      margin: 0 auto;
     }
 
+    /* Text block sits below the image, constrained */
     .years-text {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 32px 100px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 20px;
-      padding-top: 8px;
     }
 
-    .years-inner h2 {
-      font-size: clamp(28px, 4vw, 52px);
-      font-weight: 600;
+    .years-section h2 {
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 700;
       line-height: 1.1;
       letter-spacing: -0.02em;
     }
-    .years-inner p {
+    .years-section p {
       font-size: 16px;
       color: var(--text2);
       line-height: 1.6;
@@ -1727,7 +1721,7 @@
 
       .container { padding: 0 20px; }
 
-      .years-section { padding: 0 20px 80px; }
+      .years-text { padding: 32px 20px 80px; }
       .platform-section { padding: 80px 20px; }
       .features-section { padding: 80px 20px; }
       .easy-start-section { padding: 80px 20px; }
@@ -1985,9 +1979,11 @@
      11 YEARS SECTION
 ════════════════════════════════════════════ -->
 <section class="years-section section-animate">
-  <div class="years-inner">
-    <img src="years-bg.avif" class="years-img" alt="11 years">
-    <div class="years-text">
+  <!-- Full-width "11" image — no container, fills viewport width -->
+  <img src="years-bg.avif" class="years-img" alt="11 years">
+
+  <!-- Text below the image, constrained -->
+  <div class="years-text">
     <h2><span class="accent-word">11 years</span> of empowering traders,<br>and it's just a beginning.</h2>
     <p>
       Since 2014, Xtreme Markets has grown from a small trading platform into a
@@ -2003,7 +1999,6 @@
         Read news
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
       </a>
-    </div>
     </div>
   </div>
 </section>
