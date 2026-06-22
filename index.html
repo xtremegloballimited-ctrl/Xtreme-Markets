@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xtreme Markets — Online Trading Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:   #7dc74b;
+      --green2:  #5faa2e;
+      --dark:    #0d1117;
+      --dark2:   #151b24;
+      --dark3:   #1c2535;
+      --border:  rgba(255,255,255,0.08);
+      --text:    #ffffff;
+      --muted:   #8a95a3;
+      --card:    #161d2b;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--dark); color: var(--text); overflow-x: hidden; }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(13,17,23,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+    }
+    .nav-wrap {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 100%; padding: 0 24px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo svg { width: 32px; height: 32px; }
+    .nav-logo span { color: var(--green); }
+
+    .nav-links { display: flex; align-items: center; gap: 4px; }
+    .nav-item { position: relative; }
+    .nav-item > a, .nav-item > button {
+      display: flex; align-items: center; gap: 5px;
+      padding: 8px 14px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; color: var(--text);
+      background: none; border: none; cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .nav-item > a:hover, .nav-item > button:hover { background: rgba(255,255,255,0.06); color: var(--green); }
+    .nav-item > button svg { transition: transform 0.2s; }
+    .nav-item.open > button svg { transform: rotate(180deg); }
+
+    /* Dropdown */
+    .dropdown {
+      position: absolute; top: calc(100% + 8px); left: 0;
+      background: var(--dark2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px; min-width: 200px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+      z-index: 100;
+    }
+    .nav-item.open .dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+    .dropdown a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 8px; font-size: 13.5px;
+      color: var(--muted); transition: background 0.15s, color 0.15s;
+    }
+    .dropdown a:hover { background: rgba(125,199,75,0.1); color: var(--green); }
+    .dropdown a .dd-icon { width: 18px; height: 18px; opacity: 0.7; }
+    .dropdown-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      color: var(--muted); padding: 8px 14px 4px; text-transform: uppercase;
+    }
+    .dropdown-divider { border: none; border-top: 1px solid var(--border); margin: 6px 0; }
+
+    /* Language */
+    .lang-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; color: var(--text);
+      background: none; border: none; cursor: pointer;
+      transition: background 0.18s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.06); }
+    .lang-flag { font-size: 18px; }
+
+    /* Auth buttons */
+    .nav-auth { display: flex; align-items: center; gap: 8px; }
+    .btn-login {
+      padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      color: var(--text); background: none; border: 1px solid var(--border);
+      cursor: pointer; transition: border-color 0.18s, color 0.18s;
+    }
+    .btn-login:hover { border-color: var(--green); color: var(--green); }
+    .btn-signup {
+      padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 700;
+      color: #fff; background: var(--green); border: none;
+      cursor: pointer; transition: background 0.18s, transform 0.1s;
+    }
+    .btn-signup:hover { background: var(--green2); transform: translateY(-1px); }
+
+    /* Mobile hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 80px 24px 60px;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(125,199,75,0.08) 0%, transparent 70%),
+                  linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 1280px; margin: 0 auto; width: 100%; display: flex; align-items: center; gap: 60px; }
+    .hero-text { flex: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(125,199,75,0.12); border: 1px solid rgba(125,199,75,0.3);
+      border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+      color: var(--green); margin-bottom: 24px;
+    }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.1;
+      letter-spacing: -1.5px; margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--green); }
+    .hero p { font-size: 17px; color: var(--muted); line-height: 1.7; max-width: 480px; margin-bottom: 36px; }
+
+    .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 700;
+      color: #fff; background: var(--green); border: none; cursor: pointer;
+      transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+      box-shadow: 0 4px 24px rgba(125,199,75,0.35);
+    }
+    .btn-primary:hover { background: var(--green2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(125,199,75,0.45); }
+    .btn-demo {
+      padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
+      color: var(--text); background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      cursor: pointer; transition: background 0.18s, border-color 0.18s;
+    }
+    .btn-demo:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+    .hero-stats { display: flex; gap: 36px; margin-top: 48px; }
+    .hero-stat-num { font-size: 28px; font-weight: 800; color: var(--green); }
+    .hero-stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Chart card */
+    .hero-visual { flex: 1; max-width: 520px; position: relative; }
+    .chart-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 20px; position: relative; overflow: hidden;
+    }
+    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .chart-asset { display: flex; align-items: center; gap: 10px; }
+    .asset-icon { width: 36px; height: 36px; border-radius: 50%; background: #f7931a; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; }
+    .asset-name { font-weight: 700; font-size: 15px; }
+    .asset-pair { font-size: 12px; color: var(--muted); }
+    .chart-price { text-align: right; }
+    .price-val { font-size: 22px; font-weight: 800; }
+    .price-change { font-size: 12px; color: var(--green); font-weight: 600; }
+
+    /* Mini SVG chart */
+    .mini-chart { width: 100%; height: 120px; }
+    .chart-controls { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+    .time-btn {
+      padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .time-btn.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+    .trade-btns { display: flex; gap: 8px; margin-top: 16px; }
+    .btn-up {
+      flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700;
+      background: rgba(125,199,75,0.15); border: 1px solid rgba(125,199,75,0.4);
+      color: var(--green); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background 0.18s;
+    }
+    .btn-up:hover { background: rgba(125,199,75,0.25); }
+    .btn-down {
+      flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700;
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.35);
+      color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background 0.18s;
+    }
+    .btn-down:hover { background: rgba(239,68,68,0.22); }
+
+    /* Floating badges */
+    .float-badge {
+      position: absolute; background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 14px; font-size: 12px; font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .float-badge.top-right { top: -16px; right: -16px; }
+    .float-badge .fb-val { font-size: 16px; font-weight: 800; color: var(--green); }
+    .float-badge .fb-label { color: var(--muted); font-size: 11px; }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 100px 24px; }
+    .section-inner { max-width: 1280px; margin: 0 auto; }
+    .section-label { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+    .section-title { font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+    .section-sub { font-size: 16px; color: var(--muted); max-width: 560px; line-height: 1.7; }
+
+    /* ── ASSETS ── */
+    .assets-section { background: var(--dark2); }
+    .assets-tabs { display: flex; gap: 8px; margin: 40px 0 28px; flex-wrap: wrap; }
+    .asset-tab {
+      padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer; transition: all 0.18s;
+    }
+    .asset-tab.active { background: var(--green); border-color: var(--green); color: #fff; }
+    .asset-tab:hover:not(.active) { border-color: var(--green); color: var(--green); }
+
+    .assets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .asset-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px; cursor: pointer; transition: border-color 0.18s, transform 0.18s;
+    }
+    .asset-card:hover { border-color: var(--green); transform: translateY(-3px); }
+    .asset-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .asset-ico { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .asset-pct { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+    .pct-up { background: rgba(125,199,75,0.15); color: var(--green); }
+    .pct-dn { background: rgba(239,68,68,0.12); color: #ef4444; }
+    .asset-card-name { font-size: 14px; font-weight: 700; }
+    .asset-card-full { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .asset-card-price { font-size: 18px; font-weight: 800; margin-top: 10px; }
+
+    /* Sparkline */
+    .sparkline { width: 100%; height: 40px; margin-top: 12px; }
+
+    /* ── FEATURES ── */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 56px; }
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 32px; transition: border-color 0.18s;
+    }
+    .feature-card:hover { border-color: rgba(125,199,75,0.4); }
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: rgba(125,199,75,0.1); border: 1px solid rgba(125,199,75,0.2);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+    }
+    .feature-icon svg { width: 24px; height: 24px; stroke: var(--green); fill: none; stroke-width: 2; }
+    .feature-title { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+    .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { background: var(--dark2); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 32px; margin-top: 56px; }
+    .step { position: relative; text-align: center; padding: 0 16px; }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 800; color: #fff;
+      margin: 0 auto 20px; box-shadow: 0 4px 20px rgba(125,199,75,0.35);
+    }
+    .step h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .step p { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+    /* ── CTA BANNER ── */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(125,199,75,0.12) 0%, rgba(125,199,75,0.04) 100%);
+      border-top: 1px solid rgba(125,199,75,0.15);
+      border-bottom: 1px solid rgba(125,199,75,0.15);
+      padding: 80px 24px; text-align: center;
+    }
+    .cta-section h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+    .cta-section p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto 36px; line-height: 1.7; }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark2); border-top: 1px solid var(--border);
+      padding: 60px 24px 32px;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 800; margin-bottom: 16px; }
+    .footer-logo span { color: var(--green); }
+    .footer-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; max-width: 280px; }
+    .footer-col h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 16px; }
+    .footer-col a { display: block; font-size: 13.5px; color: var(--muted); margin-bottom: 10px; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--green); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; gap: 16px; }
+    .footer-copy { font-size: 12.5px; color: var(--muted); }
+    .footer-risk { font-size: 11px; color: rgba(138,149,163,0.6); max-width: 600px; line-height: 1.6; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .nav-links, .nav-auth { display: none; }
+      .hamburger { display: flex; }
+      .hero-inner { flex-direction: column; }
+      .hero-visual { max-width: 100%; width: 100%; }
+      .hero-stats { gap: 24px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 540px) {
+      .footer-top { grid-template-columns: 1fr; }
+      .hero-stats { flex-wrap: wrap; }
+    }
+
+    /* Mobile menu overlay */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: var(--dark); padding: 80px 24px 32px;
+      flex-direction: column; gap: 8px; overflow-y: auto;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-nav-item { border-radius: 10px; overflow: hidden; }
+    .mobile-nav-btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; font-size: 15px; font-weight: 600; color: var(--text);
+      background: none; border: none; cursor: pointer; border-radius: 10px;
+      transition: background 0.15s;
+    }
+    .mobile-nav-btn:hover { background: rgba(255,255,255,0.05); }
+    .mobile-sub { display: none; padding: 4px 0 8px 16px; }
+    .mobile-sub.open { display: block; }
+    .mobile-sub a { display: block; padding: 10px 16px; font-size: 14px; color: var(--muted); border-radius: 8px; }
+    .mobile-sub a:hover { color: var(--green); background: rgba(125,199,75,0.08); }
+    .mobile-auth { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .mobile-auth button { padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="nav-wrap">
+    <!-- Logo -->
+    <a href="/" class="nav-logo">
+      <svg viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#7dc74b"/>
+        <path d="M8 22L14 12L19 18L23 14" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="23" cy="14" r="2" fill="#fff"/>
+      </svg>
+      Xtreme<span>Markets</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="nav-links">
+      <!-- Trading -->
+      <div class="nav-item" id="nav-trading">
+        <button onclick="toggleNav('nav-trading')">
+          Trading
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-label">Markets</div>
+          <a href="trading/forex.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Forex
+          </a>
+          <a href="trading/stocks.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Stocks
+          </a>
+          <a href="trading/crypto.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"/></svg>
+            Crypto
+          </a>
+          <a href="trading/commodities.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            Commodities
+          </a>
+          <a href="trading/indices.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Indices
+          </a>
+          <a href="trading/etfs.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            ETFs
+          </a>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="nav-item" id="nav-about">
+        <button onclick="toggleNav('nav-about')">
+          About
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown">
+          <a href="about/about-us.html">About Us</a>
+          <hr class="dropdown-divider">
+          <div class="dropdown-label">Legal</div>
+          <a href="about/privacy-policy.html">Privacy Policy</a>
+          <a href="about/terms.html">Terms & Conditions</a>
+          <a href="about/cookie-policy.html">Cookie Policy</a>
+          <hr class="dropdown-divider">
+          <div class="dropdown-label">Company</div>
+          <a href="about/awards.html">Awards</a>
+          <a href="about/reviews.html">Reviews</a>
+          <a href="about/partnership.html">Partnership</a>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div class="nav-item" id="nav-help">
+        <button onclick="toggleNav('nav-help')">
+          Help
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown">
+          <a href="help/faq.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            FAQ
+          </a>
+          <a href="help/contact.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.63 19 19.45 19.45 0 0 1 5 12.36a19.79 19.79 0 0 1-3.88-8.19A2 2 0 0 1 3.12 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.41-.41a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Contact Us
+          </a>
+          <a href="help/help-center.html">
+            <svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Help Center
+          </a>
+        </div>
+      </div>
+
+      <!-- Language -->
+      <button class="lang-btn" onclick="toggleNav('nav-lang')" style="position:relative;">
+        <span class="lang-flag">🌐</span> EN
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dropdown" id="nav-lang" style="left:auto;right:0;min-width:160px;">
+          <a href="#" onclick="setLang('EN','🇬🇧')">🇬🇧 English</a>
+          <a href="#" onclick="setLang('FR','🇫🇷')">🇫🇷 Français</a>
+          <a href="#" onclick="setLang('ES','🇪🇸')">🇪🇸 Español</a>
+          <a href="#" onclick="setLang('AR','🇸🇦')">🇸🇦 العربية</a>
+          <a href="#" onclick="setLang('PT','🇧🇷')">🇧🇷 Português</a>
+          <a href="#" onclick="setLang('RU','🇷🇺')">🇷🇺 Русский</a>
+          <a href="#" onclick="setLang('ID','🇮🇩')">🇮🇩 Bahasa</a>
+          <a href="#" onclick="setLang('ZH','🇨🇳')">🇨🇳 中文</a>
+        </div>
+      </button>
+    </nav>
+
+    <!-- Auth -->
+    <div class="nav-auth">
+      <button class="btn-login" onclick="location.href='login.html'">Log In</button>
+      <button class="btn-signup" onclick="location.href='register.html'">Sign Up</button>
+    </div>
+
+    <!-- Hamburger -->
+    <button class="hamburger" onclick="toggleMobileMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mobile-nav-item">
+    <button class="mobile-nav-btn" onclick="toggleMobileSub(this)">Trading <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="mobile-sub">
+      <a href="trading/forex.html">Forex</a>
+      <a href="trading/stocks.html">Stocks</a>
+      <a href="trading/crypto.html">Crypto</a>
+      <a href="trading/commodities.html">Commodities</a>
+      <a href="trading/indices.html">Indices</a>
+      <a href="trading/etfs.html">ETFs</a>
+    </div>
+  </div>
+  <div class="mobile-nav-item">
+    <button class="mobile-nav-btn" onclick="toggleMobileSub(this)">About <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="mobile-sub">
+      <a href="about/about-us.html">About Us</a>
+      <a href="about/privacy-policy.html">Privacy Policy</a>
+      <a href="about/terms.html">Terms & Conditions</a>
+      <a href="about/cookie-policy.html">Cookie Policy</a>
+      <a href="about/awards.html">Awards</a>
+      <a href="about/reviews.html">Reviews</a>
+      <a href="about/partnership.html">Partnership</a>
+    </div>
+  </div>
+  <div class="mobile-nav-item">
+    <button class="mobile-nav-btn" onclick="toggleMobileSub(this)">Help <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="mobile-sub">
+      <a href="help/faq.html">FAQ</a>
+      <a href="help/contact.html">Contact Us</a>
+      <a href="help/help-center.html">Help Center</a>
+    </div>
+  </div>
+  <div class="mobile-auth">
+    <button class="btn-login" style="border:1px solid var(--border);background:none;color:var(--text);" onclick="location.href='login.html'">Log In</button>
+    <button class="btn-signup" onclick="location.href='register.html'">Sign Up Free</button>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">Live Trading Platform</div>
+      <h1>Trade Smarter,<br>Win <span>Bigger</span></h1>
+      <p>Access global markets — Forex, Stocks, Crypto, Commodities and more. Start with a free demo account and trade like a pro.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="location.href='register.html'">Start Trading Free</button>
+        <button class="btn-demo" onclick="location.href='register.html?demo=1'">Try Demo Account</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">10M+</div>
+          <div class="hero-stat-label">Active Traders</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">180+</div>
+          <div class="hero-stat-label">Countries</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">$0</div>
+          <div class="hero-stat-label">Min. Deposit</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Card -->
+    <div class="hero-visual">
+      <div class="float-badge top-right">
+        <div class="fb-val">+$2,847</div>
+        <div class="fb-label">Today's Profit</div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-asset">
+            <div class="asset-icon">₿</div>
+            <div>
+              <div class="asset-name">BTC/USD</div>
+              <div class="asset-pair">Bitcoin · Crypto</div>
+            </div>
+          </div>
+          <div class="chart-price">
+            <div class="price-val">$67,432</div>
+            <div class="price-change">▲ +3.24%</div>
+          </div>
+        </div>
+
+        <!-- SVG Chart -->
+        <svg class="mini-chart" viewBox="0 0 460 120" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7dc74b" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#7dc74b" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,90 L30,80 L60,85 L90,70 L120,65 L150,72 L180,55 L210,48 L240,52 L270,38 L300,30 L330,35 L360,22 L390,18 L420,12 L460,8 L460,120 L0,120 Z" fill="url(#chartGrad)"/>
+          <path d="M0,90 L30,80 L60,85 L90,70 L120,65 L150,72 L180,55 L210,48 L240,52 L270,38 L300,30 L330,35 L360,22 L390,18 L420,12 L460,8" fill="none" stroke="#7dc74b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <div class="chart-controls">
+          <button class="time-btn active">1M</button>
+          <button class="time-btn">5M</button>
+          <button class="time-btn">15M</button>
+          <button class="time-btn">1H</button>
+          <button class="time-btn">1D</button>
+        </div>
+        <div class="trade-btns">
+          <button class="btn-up">▲ Higher</button>
+          <button class="btn-down">▼ Lower</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ASSETS ── -->
+<section class="assets-section">
+  <div class="section-inner">
+    <div class="section-label">Markets</div>
+    <h2 class="section-title">Trade 100+ Global Assets</h2>
+    <p class="section-sub">From major currency pairs to top stocks and crypto — all in one platform with real-time prices.</p>
+
+    <div class="assets-tabs">
+      <button class="asset-tab active" onclick="filterAssets('all',this)">All</button>
+      <button class="asset-tab" onclick="filterAssets('forex',this)">Forex</button>
+      <button class="asset-tab" onclick="filterAssets('stocks',this)">Stocks</button>
+      <button class="asset-tab" onclick="filterAssets('crypto',this)">Crypto</button>
+      <button class="asset-tab" onclick="filterAssets('commodities',this)">Commodities</button>
+      <button class="asset-tab" onclick="filterAssets('indices',this)">Indices</button>
+      <button class="asset-tab" onclick="filterAssets('etfs',this)">ETFs</button>
+    </div>
+
+    <div class="assets-grid" id="assets-grid"></div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section>
+  <div class="section-inner">
+    <div class="section-label">Why Choose Us</div>
+    <h2 class="section-title">Everything You Need to Trade</h2>
+    <p class="section-sub">A complete trading ecosystem built for beginners and professionals alike.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="feature-title">Real-Time Charts</div>
+        <div class="feature-desc">Advanced charting tools with 50+ technical indicators, multiple timeframes and drawing tools for precise analysis.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="feature-title">Secure & Regulated</div>
+        <div class="feature-desc">Your funds are protected with bank-grade SSL encryption and kept in segregated accounts with top-tier financial institutions.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="feature-title">Multi-Platform</div>
+        <div class="feature-desc">Trade seamlessly on web, iOS, and Android. Your positions and settings sync across all devices in real time.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="feature-title">Fast Execution</div>
+        <div class="feature-desc">Lightning-fast order execution in milliseconds. No requotes, no delays — enter and exit the market exactly when you want.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="feature-title">100+ Assets</div>
+        <div class="feature-desc">Access Forex pairs, top stocks, cryptocurrencies, commodities, indices, and ETFs all from a single unified account.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="feature-title">24/7 Support</div>
+        <div class="feature-desc">Round-the-clock live chat support in 20+ languages. Our expert team is always ready to help you with any question.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section">
+  <div class="section-inner">
+    <div class="section-label">Getting Started</div>
+    <h2 class="section-title">Start Trading in 3 Easy Steps</h2>
+    <p class="section-sub">Create your account, fund it and start trading global markets in minutes.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Create Account</h3>
+        <p>Sign up in under 2 minutes. No paperwork, no waiting. Just your email and a password to get started.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Fund Your Account</h3>
+        <p>Deposit instantly using card, bank transfer, crypto or e-wallets. Multiple currencies supported.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Start Trading</h3>
+        <p>Choose an asset, pick a direction — Higher or Lower — and trade. Withdraw profits anytime.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="section-inner" style="text-align:center;">
+    <div class="section-label" style="text-align:center;">Get Started Today</div>
+    <h2>Ready to Start Trading?</h2>
+    <p>Join millions of traders worldwide. Open a free account in under 2 minutes.</p>
+    <div class="cta-actions">
+      <button class="btn-primary" onclick="location.href='register.html'">Create Free Account</button>
+      <button class="btn-demo" onclick="location.href='register.html?demo=1'">Try Demo First</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#7dc74b"/>
+            <path d="M8 22L14 12L19 18L23 14" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="23" cy="14" r="2" fill="#fff"/>
+          </svg>
+          Xtreme<span>Markets</span>
+        </div>
+        <p class="footer-desc">A professional online trading platform providing access to global financial markets for traders worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Trading</h4>
+        <a href="trading/forex.html">Forex</a>
+        <a href="trading/stocks.html">Stocks</a>
+        <a href="trading/crypto.html">Crypto</a>
+        <a href="trading/commodities.html">Commodities</a>
+        <a href="trading/indices.html">Indices</a>
+        <a href="trading/etfs.html">ETFs</a>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="about/about-us.html">About Us</a>
+        <a href="about/privacy-policy.html">Privacy Policy</a>
+        <a href="about/terms.html">Terms & Conditions</a>
+        <a href="about/cookie-policy.html">Cookie Policy</a>
+        <a href="about/awards.html">Awards</a>
+        <a href="about/reviews.html">Reviews</a>
+        <a href="about/partnership.html">Partnership</a>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <a href="help/faq.html">FAQ</a>
+        <a href="help/contact.html">Contact Us</a>
+        <a href="help/help-center.html">Help Center</a>
+        <h4 style="margin-top:20px;">Account</h4>
+        <a href="login.html">Log In</a>
+        <a href="register.html">Sign Up</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Xtreme Markets. All rights reserved.</p>
+      <p class="footer-risk">Risk Warning: Trading involves significant risk of loss. Only trade with funds you can afford to lose. Past performance is not indicative of future results.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Nav dropdowns ── */
+  function toggleNav(id) {
+    document.querySelectorAll('.nav-item').forEach(el => { if (el.id !== id) el.classList.remove('open'); });
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+    const dd = document.getElementById('nav-lang');
+    if (id !== 'nav-lang' && dd) dd.classList.remove('open');
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.nav-item') && !e.target.closest('.lang-btn')) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('open'));
+      const dd = document.getElementById('nav-lang');
+      if (dd) dd.classList.remove('open');
+    }
+  });
+
+  /* Time frame buttons */
+  document.querySelectorAll('.time-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  /* Language switcher */
+  function setLang(code, flag) {
+    document.querySelector('.lang-btn').innerHTML = `<span class="lang-flag">${flag}</span> ${code} <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+    document.getElementById('nav-lang').classList.remove('open');
+  }
+
+  /* Mobile menu */
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('open');
+  }
+  function toggleMobileSub(btn) {
+    const sub = btn.nextElementSibling;
+    sub.classList.toggle('open');
+  }
+  document.getElementById('nav-lang') && document.querySelector('.lang-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('nav-lang');
+    dd.classList.toggle('open');
+  });
+
+  /* ── Assets Grid ── */
+  const ASSETS = [
+    { cat:'forex',       icon:'💱', name:'EUR/USD', full:'Euro / US Dollar',      price:'1.0842', pct:'+0.12%', up:true  },
+    { cat:'forex',       icon:'💱', name:'GBP/USD', full:'Pound / US Dollar',     price:'1.2634', pct:'-0.08%', up:false },
+    { cat:'forex',       icon:'💱', name:'USD/JPY', full:'Dollar / Japanese Yen', price:'149.82', pct:'+0.34%', up:true  },
+    { cat:'stocks',      icon:'📈', name:'AAPL',    full:'Apple Inc.',             price:'$189.30','pct':'+1.42%', up:true  },
+    { cat:'stocks',      icon:'📈', name:'TSLA',    full:'Tesla Inc.',             price:'$245.10','pct':'-2.17%', up:false },
+    { cat:'stocks',      icon:'📈', name:'NVDA',    full:'NVIDIA Corp.',           price:'$875.60','pct':'+3.86%', up:true  },
+    { cat:'crypto',      icon:'₿',  name:'BTC/USD', full:'Bitcoin',               price:'$67,432','pct':'+3.24%', up:true  },
+    { cat:'crypto',      icon:'Ξ',  name:'ETH/USD', full:'Ethereum',              price:'$3,521', pct:'+2.11%', up:true  },
+    { cat:'commodities', icon:'🥇', name:'GOLD',    full:'Gold Spot',             price:'$2,341', pct:'+0.67%', up:true  },
+    { cat:'commodities', icon:'🛢', name:'OIL',     full:'Crude Oil WTI',         price:'$79.42', pct:'-1.23%', up:false },
+    { cat:'indices',     icon:'📊', name:'US500',   full:'S&P 500 Index',         price:'5,214',  pct:'+0.55%', up:true  },
+    { cat:'etfs',        icon:'🗂', name:'SPY',     full:'SPDR S&P 500 ETF',      price:'$521.30','pct':'+0.48%', up:true  },
+  ];
+
+  const sparkPaths = [
+    'M0,30 L10,25 L20,28 L30,18 L40,22 L50,12 L60,8',
+    'M0,10 L10,15 L20,12 L30,22 L40,18 L50,28 L60,32',
+    'M0,25 L10,20 L20,22 L30,15 L40,10 L50,14 L60,5',
+  ];
+
+  function renderAssets(cat) {
+    const list = cat === 'all' ? ASSETS : ASSETS.filter(a => a.cat === cat);
+    document.getElementById('assets-grid').innerHTML = list.map((a, i) => `
+      <div class="asset-card">
+        <div class="asset-card-top">
+          <div class="asset-ico" style="background:${a.up ? 'rgba(125,199,75,0.12)' : 'rgba(239,68,68,0.1)'};">${a.icon}</div>
+          <span class="asset-pct ${a.up ? 'pct-up' : 'pct-dn'}">${a.pct}</span>
+        </div>
+        <div class="asset-card-name">${a.name}</div>
+        <div class="asset-card-full">${a.full}</div>
+        <div class="asset-card-price">${a.price}</div>
+        <svg class="sparkline" viewBox="0 0 60 40" preserveAspectRatio="none">
+          <path d="${sparkPaths[i % sparkPaths.length]}" fill="none" stroke="${a.up ? '#7dc74b' : '#ef4444'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>`).join('');
+  }
+
+  function filterAssets(cat, btn) {
+    document.querySelectorAll('.asset-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderAssets(cat);
+  }
+
+  renderAssets('all');
+</script>
+</body>
+</html>
