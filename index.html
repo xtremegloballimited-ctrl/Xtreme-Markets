@@ -161,12 +161,14 @@
       height: 100%;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
+      grid-template-areas: "logo nav buttons";
       align-items: center;
       gap: 16px;
     }
 
     /* Logo */
     .nav-logo {
+      grid-area: logo;
       justify-self: start;
       display: flex;
       align-items: center;
@@ -191,6 +193,7 @@
 
     /* Centered nav pill island */
     .nav-links {
+      grid-area: nav;
       justify-self: center;
       display: flex;
       align-items: center;
@@ -291,6 +294,7 @@
 
     /* Nav right */
     .nav-right {
+      grid-area: buttons;
       justify-self: end;
       display: flex;
       align-items: center;
@@ -375,20 +379,25 @@
     }
     .btn-try:hover { opacity: 0.92; transform: translateY(-1px); }
 
-    /* Hamburger */
+    /* Mobile hamburger — rounded square box */
     .hamburger {
       display: none;
+      grid-area: burger;
       flex-direction: column;
+      justify-content: center;
+      align-items: center;
       gap: 5px;
-      background: none;
-      border: none;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
       cursor: pointer;
-      padding: 6px;
-      margin-left: auto;
+      padding: 0;
+      width: 44px;
+      height: 44px;
     }
     .hamburger span {
       display: block;
-      width: 22px; height: 2px;
+      width: 20px; height: 2px;
       background: var(--text);
       border-radius: 2px;
       transition: all 0.28s;
@@ -396,6 +405,23 @@
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile sign-in icon — rounded square box */
+    .mobile-signin {
+      display: none;
+      grid-area: signin;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .mobile-signin svg { width: 20px; height: 20px; }
+    .mobile-signin:hover { background: rgba(255,255,255,0.1); }
 
     /* Mobile nav */
     .mobile-nav {
@@ -1751,8 +1777,16 @@
     }
 
     @media (max-width: 768px) {
+      .nav-inner {
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas: "burger logo signin";
+        padding: 0 16px;
+        gap: 8px;
+      }
+      .nav-logo { justify-self: center; margin: 0; font-size: 16px; }
       .nav-links, .nav-right { display: none; }
       .hamburger { display: flex; }
+      .mobile-signin { display: flex; }
 
       .hero { padding-top: 64px; }
       .hero-container { padding: 0 16px; }
@@ -1939,10 +1973,19 @@
       <a href="register.html"><button class="btn-try">Try for free</button></a>
     </div>
 
-    <!-- Hamburger (mobile) -->
+    <!-- Hamburger (mobile) — positioned via grid-area: burger -->
     <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
+
+    <!-- Mobile sign-in icon — positioned via grid-area: signin -->
+    <a href="login.html" class="mobile-signin" aria-label="Sign in">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+    </a>
   </div>
 </header>
 
