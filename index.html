@@ -446,62 +446,97 @@
        HERO
     ═══════════════════════════════════════════════ */
     .hero {
-      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      padding-top: 64px;
+      background: var(--canvas);
+    }
+
+    /* Container inside hero needs positioning context for absolute man-wrap */
+    .hero-wrap {
+      position: relative;
+    }
+
+    /* Man image wrapper — inline on mobile, absolute-centered on tablet+ */
+    .hero-man-wrap {
+      aspect-ratio: 591 / 800;
+      max-height: 50vh;
+      z-index: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      position: relative;
+      pointer-events: none;
+    }
+    @media (min-width: 768px) {
+      .hero-man-wrap {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%);
+        height: 85vh;
+        max-height: unset;
+        aspect-ratio: unset;
+        width: auto;
+      }
+    }
+
+    .hero-man-img {
+      aspect-ratio: 591 / 800;
+      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* SVG bars decoration — sits inside the man wrapper, behind the man */
+    .hero-bg-bars {
+      position: absolute;
+      z-index: -1;
+      top: -40px;
+      pointer-events: none;
+    }
+    @media (min-width: 768px) {
+      .hero-bg-bars {
+        width: 100%;
+        top: auto;
+        bottom: 80px;
+      }
+    }
+    @media (min-width: 1280px) {
+      .hero-bg-bars {
+        bottom: -200px;
+      }
+    }
+
+    /* Content stack — below image on mobile, overlapping on desktop */
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      row-gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Heading area — tall on tablet+ so text aligns to bottom of viewport */
+    .hero-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-top: 24px;
+    }
+    @media (min-width: 768px) {
+      .hero-heading {
+        min-height: calc(100vh - 245px);
+      }
+    }
+
+    .hero-heading-inner {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-      padding: 80px 32px 0;
-      background: var(--canvas);
+      gap: 24px;
       text-align: center;
-    }
-
-    /* SVG background — full bleed */
-    .hero-bg-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Man image — absolute, anchored bottom-center-right, behind text */
-    .hero-man {
-      position: absolute;
-      bottom: 60px; /* sits above pill bar */
-      left: 50%;
-      transform: translateX(-10%);
-      height: 82%;
-      width: auto;
-      pointer-events: none;
-      z-index: 1;
-      filter: drop-shadow(0 0 80px rgba(106,255,65,0.14));
-    }
-
-    /* Dark vignette: heavier top/bottom, lighter center so man shows */
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.55) 100%),
-        linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.0) 30%, rgba(0,0,0,0.0) 65%, rgba(0,0,0,0.5) 100%);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    /* Centered text block sits above man + overlay */
-    .hero-content {
-      position: relative;
-      z-index: 3;
-      max-width: 680px;
-      text-align: center;
-      padding-bottom: 40px;
     }
 
     .hero h1 {
@@ -509,7 +544,6 @@
       font-weight: 700;
       line-height: 1.05;
       letter-spacing: -0.03em;
-      margin-bottom: 32px;
       color: var(--text);
     }
 
@@ -525,45 +559,48 @@
       padding: 16px 36px;
       border-radius: 50px;
     }
-    .hero-cta .link-green {
-      font-size: 15px;
+
+    /* Feature tabs — 2-col grid mobile, flex wrap tablet+ */
+    .hero-tabs {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+      list-style: none;
+      padding: 0 16px 40px;
+    }
+    @media (min-width: 768px) {
+      .hero-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding: 0 0 48px;
+      }
     }
 
-    /* Pills — fixed to very bottom of hero as a full-width bar */
-    .hero-pills {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(20px);
-      flex-wrap: nowrap;
-      overflow-x: auto;
-    }
-    .hero-pill {
+    .hero-tab {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
-      padding: 14px 22px;
+      padding: 13px 20px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
       font-size: 13px;
       font-weight: 500;
       color: var(--text2);
       cursor: pointer;
-      transition: color 0.18s, background 0.18s;
+      transition: color 0.18s, background 0.18s, border-color 0.18s;
+      text-align: center;
       white-space: nowrap;
-      border-right: 1px solid rgba(255,255,255,0.06);
-      flex: 1;
-      justify-content: center;
     }
-    .hero-pill:last-child { border-right: none; }
-    .hero-pill:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .hero-pill .pill-emoji { font-size: 15px; }
+    .hero-tab:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.16);
+    }
+    .hero-tab .pill-emoji { font-size: 15px; }
 
     /* ═══════════════════════════════════════════════
        11 YEARS SECTION
@@ -1943,32 +1980,43 @@
      HERO SECTION
 ════════════════════════════════════════════ -->
 <section class="hero">
-  <!-- SVG background -->
-  <img src="hero-bg.svg" class="hero-bg-svg" alt="" aria-hidden="true">
+  <div class="container hero-wrap">
 
-  <!-- Man image — layered behind text -->
-  <img src="hero-man.avif" class="hero-man" alt="Trader">
-
-  <!-- Centered text content -->
-  <div class="hero-content">
-    <h1>Build confidence with<br>every single trade</h1>
-    <div class="hero-cta">
-      <a href="register.html"><button class="btn-green">Start now for $0</button></a>
-      <a href="#modern_platform" class="link-green">
-        Learn more
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-      </a>
+    <!-- Man image wrapper — inline on mobile, absolute-centered on desktop -->
+    <div class="hero-man-wrap">
+      <picture>
+        <img class="hero-man-img" src="hero-man.avif" alt="hero image" fetchpriority="high">
+      </picture>
+      <!-- SVG bars sit behind the man image -->
+      <img class="hero-bg-bars" src="hero-bg.svg" alt="" aria-hidden="true">
     </div>
-  </div>
 
-  <!-- Pill tabs anchored to bottom of hero -->
-  <div class="hero-pills">
-    <a href="#modern_platform" class="hero-pill"><span class="pill-emoji">🔥</span> Modern platform</a>
-    <a href="#useful_features" class="hero-pill"><span class="pill-emoji">❤️</span> Useful features</a>
-    <a href="#easy_start" class="hero-pill"><span class="pill-emoji">🏁</span> Easy start</a>
-    <a href="#learning_center" class="hero-pill"><span class="pill-emoji">📚</span> Learning center</a>
-    <a href="#quick_withdrawals" class="hero-pill"><span class="pill-emoji">💰</span> Quick withdrawals</a>
-    <a href="#trusted_broker" class="hero-pill"><span class="pill-emoji">🛡️</span> Trusted broker</a>
+    <!-- Text content — below image on mobile, overlapping on desktop -->
+    <div class="hero-content">
+      <div class="hero-heading">
+        <div class="hero-heading-inner">
+          <h1>Build confidence<br>with every single trade</h1>
+          <div class="hero-cta">
+            <a href="register.html"><button class="btn-green">Start now for $0</button></a>
+            <a href="#modern_platform" class="link-green">
+              Learn more
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature tabs — 2-col grid on mobile, flex wrap on desktop -->
+      <ul class="hero-tabs">
+        <li><a href="#modern_platform" class="hero-tab"><span class="pill-emoji">🔥</span> Modern platform</a></li>
+        <li><a href="#useful_features" class="hero-tab"><span class="pill-emoji">❤️</span> Useful features</a></li>
+        <li><a href="#easy_start" class="hero-tab"><span class="pill-emoji">🏁</span> Easy start</a></li>
+        <li><a href="#learning_center" class="hero-tab"><span class="pill-emoji">📚</span> Learning center</a></li>
+        <li><a href="#quick_withdrawals" class="hero-tab"><span class="pill-emoji">💰</span> Quick withdrawals</a></li>
+        <li><a href="#trusted_broker" class="hero-tab"><span class="pill-emoji">🛡️</span> Trusted broker</a></li>
+      </ul>
+    </div>
+
   </div>
 </section>
 
