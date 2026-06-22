@@ -443,121 +443,159 @@
     }
 
     /* ═══════════════════════════════════════════════
-       HERO
+       HERO — replicates Olymp Trade structure exactly
     ═══════════════════════════════════════════════ */
     .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
       position: relative;
       overflow: hidden;
-      padding: 100px 0 0;
+      padding-top: 64px;
       background: var(--canvas);
     }
 
-    /* Full-section SVG background */
-    .hero-bg-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 1;
-    }
-
-    /* Subtle overlay so text stays readable over SVG */
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to right,
-        rgba(0,0,0,0.82) 0%,
-        rgba(0,0,0,0.55) 45%,
-        rgba(0,0,0,0.10) 100%
-      );
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    /* Inner flex row: text left + man right */
-    .hero-inner {
-      position: relative;
-      z-index: 2;
-      width: 100%;
+    .hero-container {
       max-width: 1240px;
       margin: 0 auto;
-      padding: 0 32px 60px;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    /* Image wrap — inline on mobile, absolute-centered on tablet+ */
+    .hero-image-wrap {
+      aspect-ratio: 591 / 800;
+      max-height: 50vh;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+    @media (min-width: 768px) {
+      .hero-image-wrap {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%);
+        height: 85vh;
+        max-height: unset;
+        width: auto;
+        aspect-ratio: 591 / 800;
+      }
+    }
+
+    /* The man image */
+    .hero-man-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      aspect-ratio: 591 / 800;
+      position: relative;
+      z-index: 2;
+      display: block;
+    }
+
+    /* SVG bars — behind man, visible decoration */
+    .hero-bars {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 1;
+      width: 100%;
+      max-width: 100vw;
+    }
+    @media (min-width: 768px) {
+      .hero-bars {
+        width: 100vw;
+        max-width: none;
+        top: auto;
+        bottom: 80px;
+      }
+    }
+    @media (min-width: 1280px) {
+      .hero-bars {
+        bottom: -200px;
+      }
+    }
+
+    /* Content stack — text + tabs */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      row-gap: 24px;
+    }
+
+    /* Heading wrapper — tall on tablet+ so content sits near bottom */
+    .hero-heading {
       display: flex;
       align-items: flex-end;
-      justify-content: space-between;
-      gap: 32px;
+      justify-content: center;
+      padding-top: 24px;
+    }
+    @media (min-width: 768px) {
+      .hero-heading {
+        min-height: calc(100vh - 245px);
+      }
     }
 
-    .hero-content {
-      flex: 0 0 auto;
-      max-width: 580px;
-      text-align: left;
-      padding-bottom: 60px;
-    }
-
-    /* Hero man image */
-    .hero-man {
-      flex: 0 0 auto;
-      width: clamp(320px, 42vw, 620px);
-      align-self: flex-end;
-      margin-bottom: -4px;
-      pointer-events: none;
-      filter: drop-shadow(0 0 60px rgba(106,255,65,0.18));
+    .hero-heading-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      text-align: center;
     }
 
     .hero h1 {
-      font-size: clamp(34px, 4.8vw, 68px);
+      font-size: clamp(36px, 5.4vw, 76px);
       font-weight: 700;
       line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 24px;
+      letter-spacing: -0.02em;
       color: var(--text);
-    }
-
-    .hero-sub {
-      font-size: clamp(15px, 1.6vw, 18px);
-      color: var(--text2);
-      margin-bottom: 40px;
-      max-width: 460px;
-      line-height: 1.6;
+      margin: 0;
     }
 
     .hero-cta {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      gap: 16px;
-      margin-bottom: 52px;
-      flex-wrap: wrap;
+      gap: 14px;
     }
     .hero-cta .btn-green {
       font-size: 16px;
-      padding: 16px 36px;
-      border-radius: var(--radius-md);
+      padding: 18px 40px;
+      border-radius: 50px;
+    }
+    .hero-cta .link-green {
+      font-size: 15px;
     }
 
-    /* Tab pills row */
-    .hero-pills {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 8px;
-      flex-wrap: wrap;
+    /* Tabs — 2-col grid on mobile, flex-wrap centered on tablet+ */
+    .hero-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      list-style: none;
+      padding: 0 0 32px;
+      margin: 0;
     }
-    .hero-pill {
+    @media (min-width: 768px) {
+      .hero-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding-bottom: 32px;
+      }
+    }
+
+    .hero-tab {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border-radius: 50px;
       background: rgba(255,255,255,0.06);
       backdrop-filter: blur(16px);
@@ -569,12 +607,12 @@
       transition: background 0.18s, border-color 0.18s, color 0.18s;
       white-space: nowrap;
     }
-    .hero-pill:hover {
-      background: rgba(255,255,255,0.1);
+    .hero-tab:hover {
+      background: rgba(255,255,255,0.12);
       border-color: rgba(255,255,255,0.18);
       color: var(--text);
     }
-    .hero-pill .pill-emoji { font-size: 16px; }
+    .hero-tab .pill-emoji { font-size: 16px; }
 
     /* ═══════════════════════════════════════════════
        11 YEARS SECTION
@@ -1723,13 +1761,9 @@
       .nav-links, .nav-right { display: none; }
       .hamburger { display: flex; }
 
-      .hero { padding: 100px 0 0; }
-      .hero-inner { flex-direction: column; align-items: flex-start; padding: 0 20px 48px; gap: 0; }
-      .hero-content { max-width: 100%; padding-bottom: 32px; text-align: left; }
-      .hero-man { width: 100%; max-width: 360px; align-self: center; margin-bottom: 0; }
-      .hero-cta { justify-content: flex-start; }
-      .hero-pills { justify-content: flex-start; }
-      .hero::before { background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.4) 100%); }
+      .hero { padding-top: 64px; }
+      .hero-container { padding: 0 16px; }
+      .hero h1 { font-size: clamp(32px, 8vw, 48px); }
 
       .feat-grid-2 { grid-template-columns: 1fr; }
       .learning-grid { grid-template-columns: 1fr; }
@@ -1759,8 +1793,8 @@
     }
 
     @media (max-width: 480px) {
-      .hero-pills { gap: 6px; }
-      .hero-pill { font-size: 12.5px; padding: 8px 14px; }
+      .hero-tabs { gap: 8px; }
+      .hero-tab { font-size: 12.5px; padding: 10px 14px; }
       .footer-nav-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
@@ -1954,39 +1988,43 @@
 
 
 <!-- ════════════════════════════════════════════
-     HERO SECTION
+     HERO SECTION — Olymp Trade structure
 ════════════════════════════════════════════ -->
 <section class="hero">
-  <!-- SVG background -->
-  <img src="hero-bg.svg" class="hero-bg-svg" alt="" aria-hidden="true">
+  <div class="hero-container">
 
-  <div class="hero-inner">
-    <!-- Left: text content -->
-    <div class="hero-content">
-      <h1>Build confidence with<br>every single trade</h1>
-      <p class="hero-sub">Trade forex, crypto, stocks and commodities with a platform built for both beginners and professionals.</p>
-
-      <div class="hero-cta">
-        <a href="register.html"><button class="btn-green">Start now for $0</button></a>
-        <a href="#modern_platform" class="link-green">
-          Learn more
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-        </a>
-      </div>
-
-      <!-- Tab pill anchors -->
-      <div class="hero-pills">
-        <a href="#modern_platform" class="hero-pill"><span class="pill-emoji">🔥</span> Modern platform</a>
-        <a href="#useful_features" class="hero-pill"><span class="pill-emoji">❤️</span> Useful features</a>
-        <a href="#easy_start" class="hero-pill"><span class="pill-emoji">🏁</span> Easy start</a>
-        <a href="#learning_center" class="hero-pill"><span class="pill-emoji">📚</span> Learning center</a>
-        <a href="#quick_withdrawals" class="hero-pill"><span class="pill-emoji">💰</span> Quick withdrawals</a>
-        <a href="#trusted_broker" class="hero-pill"><span class="pill-emoji">🛡️</span> Trusted broker</a>
-      </div>
+    <!-- Image wrap: bars + man (inline mobile, absolute centered desktop) -->
+    <div class="hero-image-wrap">
+      <img class="hero-bars" src="hero-bg.svg" alt="" aria-hidden="true">
+      <img class="hero-man-img" src="hero-man.avif" alt="Trader" fetchpriority="high">
     </div>
 
-    <!-- Right: hero man image -->
-    <img src="hero-man.avif" class="hero-man" alt="Trader">
+    <!-- Text content (overlays man on desktop, below on mobile) -->
+    <div class="hero-content">
+      <div class="hero-heading">
+        <div class="hero-heading-inner">
+          <h1>Build confidence<br>with every single trade</h1>
+          <div class="hero-cta">
+            <a href="register.html"><button class="btn-green">Start now for $0</button></a>
+            <a href="#modern_platform" class="link-green">
+              Learn more
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature tabs: 2-col grid mobile, flex-wrap centered desktop -->
+      <ul class="hero-tabs">
+        <li><a href="#modern_platform" class="hero-tab"><span class="pill-emoji">🔥</span> Modern platform</a></li>
+        <li><a href="#useful_features" class="hero-tab"><span class="pill-emoji">❤️</span> Useful features</a></li>
+        <li><a href="#easy_start" class="hero-tab"><span class="pill-emoji">🏁</span> Easy start</a></li>
+        <li><a href="#learning_center" class="hero-tab"><span class="pill-emoji">📚</span> Learning center</a></li>
+        <li><a href="#quick_withdrawals" class="hero-tab"><span class="pill-emoji">💰</span> Quick withdrawals</a></li>
+        <li><a href="#trusted_broker" class="hero-tab"><span class="pill-emoji">🛡️</span> Trusted broker</a></li>
+      </ul>
+    </div>
+
   </div>
 </section>
 
