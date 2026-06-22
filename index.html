@@ -711,11 +711,16 @@
       margin-bottom: 64px;
     }
 
-    /* Phone mockup center */
+    /* Hand-with-phone image */
     .phone-showcase {
-      max-width: 380px;
+      max-width: 720px;
       margin: 0 auto 48px;
       position: relative;
+    }
+    .platform-img {
+      width: 100%;
+      height: auto;
+      display: block;
     }
     .phone-frame {
       background: var(--el1);
@@ -2111,38 +2116,9 @@
   <div class="container">
     <h2><span class="accent-word">Modern</span> trading platform</h2>
 
-    <!-- Phone mockup -->
+    <!-- Hand holding phone — real image -->
     <div class="phone-showcase">
-      <div class="phone-frame">
-        <div class="pf-notch"></div>
-        <div class="pf-header">
-          <div class="pf-asset">XAU/USD</div>
-          <div class="pf-price" id="livePrice">2,348.70</div>
-        </div>
-        <div class="pf-chart">
-          <div class="pf-bar" style="height:28%;background:#FF4D4D;"></div>
-          <div class="pf-bar" style="height:42%;background:#6AFF41;"></div>
-          <div class="pf-bar" style="height:34%;background:#FF4D4D;"></div>
-          <div class="pf-bar" style="height:55%;background:#6AFF41;"></div>
-          <div class="pf-bar" style="height:48%;background:#FF4D4D;"></div>
-          <div class="pf-bar" style="height:62%;background:#6AFF41;"></div>
-          <div class="pf-bar" style="height:50%;background:#FF4D4D;"></div>
-          <div class="pf-bar" style="height:74%;background:#6AFF41;"></div>
-          <div class="pf-bar" style="height:68%;background:#6AFF41;"></div>
-          <div class="pf-bar" style="height:82%;background:#6AFF41;"></div>
-          <div class="pf-bar" style="height:78%;background:#FF4D4D;"></div>
-          <div class="pf-bar" style="height:90%;background:#6AFF41;"></div>
-          <div class="pf-bar" style="height:100%;background:#6AFF41;"></div>
-        </div>
-        <div class="pf-controls">
-          <button class="pf-btn-up">▲ Higher</button>
-          <button class="pf-btn-down">▼ Lower</button>
-        </div>
-        <div class="pf-balance">
-          <div class="pf-balance-lbl">Balance</div>
-          <div class="pf-balance-val">$10,000.00</div>
-        </div>
-      </div>
+      <img src="platform-hand.avif" alt="Trading platform on phone" class="platform-img">
     </div>
 
     <!-- App download card -->
